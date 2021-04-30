@@ -1,0 +1,175 @@
+---
+- name: Redhat OS update
+  hosts: redhat
+  become: true
+
+  tasks:
+    - name: update Redhat OS
+      yum:
+        name: "*"
+        state: latest
+        update_cache: yes
+      when: ansible_os_family == "RedHat"  
+      register:  yum_results
+
+    - name: reboot Redhat linux
+      reboot:
+        pre_reboot_delay: 60
+      when: yum_results is changed
+
+    - name: Ensure apache service is started and enabled
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+
+
+- name: Oracle Linux update 
+  hosts: oracle_linux1
+  become: true
+
+  tasks:
+  - name: update Oracle Linux OS
+    yum:
+      name: "*"
+      state: latest
+      update_cache: yes
+    when: ansible_os_family == "OracleLinux"
+    register: osupdated
+
+  - name: Check if a reboot is required
+    register: file
+    stat: path=/var/run/reboot-required get_md5=no
+   
+  - name: Reboot the server
+    command: /sbin/reboot
+    when: file.stat.exists == true
+
+  - name: Ensure apache service is started and enabled
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+- name: Oracle Linux update 
+  hosts: oracle_linux2
+  become: true
+
+  tasks:
+  - name: update sqlite 
+    yum:
+      name: sqlite
+      state: latest
+      update_cache: yes
+    when: ansible_os_family == "OracleLinux"
+    register: osupdated
+
+  - name: Check if a reboot is required
+    register: file
+    stat: path=/var/run/reboot-required get_md5=no
+   
+  - name: Reboot the server
+    command: /sbin/reboot
+    when: file.stat.exists == true
+
+  - name: Ensure apache service is started and enabled
+    service:
+      name: httpd
+      state: started
+      enabled: yes
+
+- name: Debian 10 update 
+  hosts: debian
+  become: true
+  
+  tasks:
+  - name: update and upgrade apt packages
+    apt: 
+      upgrade: yes
+      update_cache: yes
+      cache_valid_time: 86400
+  
+  - name: Check if a reboot is required
+    register: file
+    stat: path=/var/run/reboot-required get_md5=no
+   
+  - name: Reboot the server
+    command: /sbin/reboot
+    when: file.stat.exists == true  
+
+  - name: Ensure apache service is started and enabled
+    service:
+      name: httpd
+      state: started
+      enabled: yes  
+
+
+- name: Nodejs update 
+  hosts: nodejs
+  become: true
+
+  tasks:
+  - name: Install Packages
+    yum: 
+       name={{ item }} 
+       update_cache=yes 
+       state=latest
+    with_items:
+      - wget
+      - curl
+
+  - name: Install nvm
+    git: "repo=https://github.com/creationix/nvm.git dest=/opt/nvm version=v0.38.0"
+    tags: nvm   
+
+  - name: "Setup NVM_DIR in ~/.{{ item }}"
+    lineinfile: "dest=~/.{{ item }} line=\"export NVM_DIR=/opt/nvm\" create=yes\n"
+    tags: nvm
+    with_items:
+      - bashrc
+      - profile   
+
+  - name: "Source nvm in ~/.{{ item }}" 
+    lineinfile: "dest=~/.{{ item }} line=\"source /opt/nvm/nvm.sh\" create=yes\n"
+    tags: nvm
+    with_items:
+      - bashrc
+      - profile    
+  
+  - name: Install node and set version
+    become: yes
+    shell: "source /opt/nvm/nvm.sh && nvm install 16.0.0"
+    args:
+      executable: /bin/bash
+
+- name: Apache Struts update 
+  hosts: apache_struts2
+  become: true
+
+  tasks:
+  - name: Install Packages
+    yum: 
+      name={{ item }} 
+      update_cache=yes 
+      state=latest
+    with_items:
+      - wget
+      - curl
+  - name: update Redhat OS
+    yum:
+      name: "*"
+      state: latest
+      update_cache: yes
+    when: ansible_os_family == "RedHat"  
+    register:  yum_results
+
+  - name: reboot Redhat linux
+    reboot:
+      pre_reboot_delay: 60
+    when: yum_results is changed
+
+  - name: Ensure apache service is started and enabled
+    service:
+      name: httpd
+      state: started
+      enabled: yes
