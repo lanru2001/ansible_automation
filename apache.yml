@@ -1,0 +1,38 @@
+---
+- hosts: myserver
+  become: true
+  vars:
+         - vars/default.yml
+- tasks:
+    - name: Install latest version of Apache
+      apt: name=apache2 update_cache=yes state=latest
+
+    - name: Create document root for your domain
+      file:
+        path: "/var/www/{{ http_host }}"
+        state: directory
+        owner: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Copy your index page
+      template:
+        src: "files/index.html.j2"
+        dest: "/var/www/{{ http_host }}/index.html"
+
+    - name: Set up virtuahHost
+      template:
+        src: "files/apache.conf.j2"
+        dest: "/etc/apache2/sites-available/{{ http_conf }}"
+      notify: restart-apache
+
+    - name: "UFW firewall allow HTTP on port {{ http_port }}"
+      ufw:
+        rule: allow
+        port: "{{ http_port }}"
+        proto: tcp
+
+  handlers:
+    - name: restart-apache
+      service:
+        name: apache2
+        state: restarted
