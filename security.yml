@@ -1,0 +1,22 @@
+---
+- hosts: localhost
+  connection: local
+  gather_facts: false
+  tasks:
+      - name: create a security group in us-east-2
+        ec2_group:
+          name: temitope
+          description: ec2 group
+          region: us-east-2
+          aws_access_key: "######"
+          aws_secret_key: "#######"
+          rules:
+            - proto: tcp
+              from_port: 80
+              to_port: 80
+              cidr_ip: 0.0.0.0/0
+            - proto: tcp
+              from_port: 22
+              to_port: 22
+              cidr_ip: 0.0.0.0/0
+        register: security_group
