@@ -1,0 +1,45 @@
+--
+- hosts:localhost
+  name: Create security group and EC2 instance
+  become: true
+  
+  task:
+   - name:setting up security/firewallgroup
+     ec2_group:
+        name: Dev_Aws_Security_Grp
+        description:Rules Allowing traffic on port 80 and 22
+        region:us-east-2
+        rules:
+          - proto:tcp
+            from_port:80
+            to_port:80
+            cidr_ip:0.0.0.0/0
+          - proto:tcp
+            from_port:22
+            to_port:22
+            cidr_ip:0.0.0.0/0
+
+         rules_egress:
+            - proto:all
+              cidr_ip:0.0.0.0/0
+   - name:provision a Ec2 instance
+       ec2:
+      key_name:1982
+      region:us-east-2
+      instance_type:t2.micro
+      image:ami-0520e698dd500b1d1
+      wait:yes
+      wait_timeout:500
+      count:2
+      instance_tags:
+            Name:awsLabServer
+            owner:Temitope
+            monitoring:no
+            vpc_subnet_id:subnet-080b909acdab63001
+            assign_public_ip:yes
+            group:Temitope_AWS_Security_Grp
+      register:ec2_out
+
+   - name:wait for SSH to come up
+      wait_for:{{item.public_dns_name}} port=22 delay=60 timeout=320 state=started
+      wait_items:'{{ec2_out.instances}}'
