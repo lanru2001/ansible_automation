@@ -141,6 +141,14 @@
     shell: "source /opt/nvm/nvm.sh && nvm install 16.0.0"
     args:
       executable: /bin/bash
+  
+  - name: Check if a reboot is required
+    register: file
+    stat: path=/var/run/reboot-required get_md5=no
+   
+  - name: Reboot the server
+    command: /sbin/reboot
+    when: file.stat.exists == true         
 
 - name: Apache Struts update 
   hosts: apache_struts2
