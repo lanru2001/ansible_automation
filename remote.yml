@@ -1,0 +1,11 @@
+---
+- name: install apache2, sqlite3, git pn remote server
+  hosts: webservers
+  sudo: yes
+  tasks:
+  - name: Install list of packages
+    action: apt pkg={{item}} state=installed
+    with_items:
+      - apache2
+      - sqlite3
+      - git
