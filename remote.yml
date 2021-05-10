@@ -5,7 +5,7 @@
   
   tasks:
   - name: Install list of packages
-    action: yum pkg={{item}} state=installed
+    yum: name={{item}} state=installed
     with_items:
       - apache2
       - sqlite3
