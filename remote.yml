@@ -1,7 +1,8 @@
 ---
-- name: install apache2, sqlite3, git pn remote server
+- name: install remote server
   hosts: webservers
-  sudo: yes
+  become: yes 
+  
   tasks:
   - name: Install list of packages
     action: yum pkg={{item}} state=installed
