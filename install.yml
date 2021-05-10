@@ -1,4 +1,4 @@
-#Ansible to patch systems and install applications
+#Ansible to patch systems and install applications using role
 - hosts: all
   roles:
       - centos-update
