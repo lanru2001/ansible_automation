@@ -1,0 +1,77 @@
+---
+# This playbook install epel-release, nginx, net-tools Packages.
+# Also, start and enable the nginx service.
+# The epel-release package enable the third party 
+# repository to install the nginx
+
+# The pkgs-host is hosts group from hosts invetory file.
+- hosts: pkgs-host
+  # tasks to execute the modules.
+  tasks:
+    # Install the epel-release package.
+  - name: Install epel-release
+    # yum module.
+    yum: 
+       # epel-release package name.
+       name: epel-release
+    # epel_status is a variable name.
+    register: epel_status
+    # Print installation status of epel-release.
+  - name: epel-release installation status
+    # debug module.
+    debug:
+       # Print the following message and epel_status       
+       # variable value.
+        msg: "epel-release status: {{epel_status}}"
+
+    # Install the nginx service.
+  - name: Install nginx and start service
+    # yum module.
+    yum:
+       # Package name and it's state which install the package.
+       name: nginx
+       state: present
+    # status_nginx is a variable name.
+    register: status_nginx
+
+   # Print the insallation status of nginx.
+  - name: Print the nginx status
+    # debug module.
+    debug:
+       # Print the message and status_nginx variable value.
+        msg: "Nginx status: {{status_nginx}}"
+
+    # Start and enable the nginx service.
+  - name: Start and enable the nginx service
+   # service module.
+    service:
+      # Package name to enable service after booting the instance 
+      # and state restarted the service after installation.
+       name: nginx
+       enabled: yes
+       state: restarted
+    # nginx_service_status variable name.
+    register: nginx_service_status
+
+    # Print the nginx service status.
+  - name: Print the nginx service status
+    # debug module.
+    debug:
+       # Print the message and nginx_service_status variable value.
+        msg: "nginx service status: {{nginx_service_status}}"
+
+    # Install the net-tools package.
+  - name: Install net-tools
+    # yum module.
+    yum:
+        # Package name to install.
+        name: net-tools
+    # net_tools_status variable name.   
+    register: net_tools_status
+
+   # Print the net-tools installation status.
+  - name: Print the net-tools installation status
+    # debug module.
+    debug:
+        # Print the message and net_tools_status variable value.
+        msg: "net-tools status: {{net_tools_status}}"
