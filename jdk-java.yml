@@ -1,0 +1,21 @@
+—
+
+# installing openjdk on diff OS.
+
+# on debian
+– apt:
+    name: openjdk-8-jdk
+    state: present
+    when: ansible_os_family == 'Debian'
+    
+# on redhat
+– yum:
+    name: java-1.8.0-openjdk
+    state: present
+    when: ansible_os_family == 'RedHat'
+    
+# on freebsd
+– pkgng:
+    name: openjdk8
+    state: present
+    when: ansible_os_family == 'FreeBSD'
