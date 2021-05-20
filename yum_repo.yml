@@ -1,0 +1,7 @@
+- hosts: all
+  tasks:
+  - name: Remove repository (and clean up left-over metadata)
+    yum_repository:
+      name: epel
+      file: docker_repo
+      state: absent
