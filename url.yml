@@ -1,0 +1,22 @@
+- hosts: all  
+
+- name: Download Debian MySQL server using HTTP/HTTPS  
+
+  tasks:
+  - name: Make directory mysql-server in /home/user/.local    
+
+     file:
+
+       path: ~/.local/mysql-server      
+
+       state: directory      
+
+       mode: 0777      
+
+   - name: GET MySQL-server packages    
+
+     get_url:
+      url: https://downloads.mysql.com/archives/get/p/23/file/mysql-server_8.0.22-1debian10_amd64.deb-bundle.tar
+      dest: ~/.local/mysql-server
+      mode: 0777
+      checksum: sha256:https://downloads.mysql.com/archives/get/p/23/file/mysql-server_8.0.22-1debian10_amd64.deb-bundle.tar.sha265
