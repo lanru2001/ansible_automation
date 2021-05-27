@@ -107,7 +107,8 @@
       - curl
 
   - name: Install nvm
-    shell: curl https://raw.githubusercontent.com/creationix/nvm/master/install.sh | bash   
+    git: "repo=https://github.com/nvm-sh/nvm   dest=/opt/nvm version=v0.38.0"  
+    tags: nvm    
 
   - name: "Setup NVM_DIR in ~/.{{ item }}"
     lineinfile: "dest=~/.{{ item }} line=\"export NVM_DIR=/opt/nvm\" create=yes\n"
