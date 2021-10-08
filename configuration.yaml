@@ -1,159 +1,348 @@
----
-- name: Redhat OS update
+--- 
+- 
+  become: true
   hosts: redhat
+  name: "Redhat OS update"
+  tasks: 
+    - 
+      name: "update Redhat OS"
+      register: yum_results
+      yum: 
+        name: "*"
+        state: latest
+        update_cache: true
+    - 
+      name: "reboot Redhat linux"
+      reboot: 
+        pre_reboot_delay: 60
+      when: "yum_results is changed"
+- 
   become: true
-
-  tasks:
-  - name: update Redhat OS
-    yum:
-      name: "*"
-      state: latest
-      update_cache: yes
-    when: ansible_os_family == "RedHat"  
-    register:  yum_results
-
-  - name: reboot Redhat linux
-    reboot:
-      pre_reboot_delay: 60
-    when: yum_results is changed
-
-- name: Oracle Linux update 
   hosts: oracle_linux1
+  name: "Oracle Linux update"
+  tasks: 
+    - 
+      name: "Install php7.3 package"
+      shell: 
+        cmd: "dnf module remove php:7.2  -y  && dnf module reset php  -y && dnf module install php:7.3 -y"
+        warn: false
+    - 
+      name: "update Oracle Linux OS"
+      register: osupdated
+      yum: 
+        name: "*"
+        state: latest
+        update_cache: true
+    - 
+      name: "Check if a reboot is required"
+      register: file
+      stat: "path=/var/run/reboot-required get_md5=no"
+    - 
+      command: /sbin/reboot
+      name: "Reboot the server"
+      when: "file.stat.exists == true"
+    - 
+      name: "Ensure apache service is started and enabled"
+      service: 
+        enabled: true
+        name: httpd
+        state: started
+        
+- 
   become: true
-
-  tasks:
-  - name: Install php7.3 package 
-    shell: 
-      cmd: dnf module remove php:7.2  -y  && dnf module reset php  -y && dnf module install php:7.3 -y   
-      warn: False      
-
-  - name: update Oracle Linux OS  
-    yum:
-      name: "*"
-      state: latest
-      update_cache: yes
-    when: ansible_os_family == "OracleLinux"
-    register: osupdated
-
-  - name: Check if a reboot is required
-    register: file
-    stat: path=/var/run/reboot-required get_md5=no
-   
-  - name: Reboot the server
-    command: /sbin/reboot
-    when: file.stat.exists == true
-
-  - name: Ensure apache service is started and enabled
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-
-- name: Oracle Linux update 
+  hosts: nginx
+  name: "Nginx update"
+  tasks: 
+    - 
+      name: "ensure nginx is at the latest version"
+      yum: 
+        name: nginx
+        state: latest
+        
+- 
+  become: true
   hosts: oracle_linux2
+  name: "Oracle Linux update"
+  tasks: 
+    - 
+      name: "update Oracle linux OS"
+      register: yum_results
+      yum: 
+        name: "*"
+        state: latest
+        update_cache: true
+    - 
+      name: "Check if a reboot is required"
+      register: file
+      stat: "path=/var/run/reboot-required get_md5=no"
+    - 
+      command: /sbin/reboot
+      name: "Reboot the server"
+      when: "file.stat.exists == true"
+    - 
+      name: "Ensure apache service is started and enabled"
+      service: 
+        enabled: true
+        name: httpd
+        state: started
+- 
   become: true
-
-  tasks:
-  - name: update sqlite 
-    yum:
-      name: sqlite
-      state: latest
-      update_cache: yes
-    when: ansible_os_family == "OracleLinux"
-    register: osupdated
-
-  - name: Check if a reboot is required
-    register: file
-    stat: path=/var/run/reboot-required get_md5=no
-   
-  - name: Reboot the server
-    command: /sbin/reboot
-    when: file.stat.exists == true
-
-  - name: Ensure apache service is started and enabled
-    service:
-      name: httpd
-      state: started
-      enabled: yes
-
-- name: Debian 10 update 
   hosts: debian
+  name: "Debian 10 update"
+  tasks: 
+    - 
+      apt: 
+        name: "*"
+        state: latest
+        update_cache: true
+      become: true
+      name: "update apt packages"
+    - 
+      apt: 
+        name: openssh-server
+        state: latest
+        update_cache: true
+      name: "install openssh"
+      register: osupdated
+      when: "ansible_os_family == \"Debian\""
+    - 
+      apt: 
+        name: nmap
+        state: latest
+      name: "install nmap"
+    - 
+      name: "Check if a reboot is required"
+      register: file
+      stat: "path=/var/run/reboot-required get_md5=no"
+    - 
+      command: /sbin/reboot
+      name: "Reboot the server"
+      when: "file.stat.exists == true"
+- 
   become: true
-  
-  tasks:
-  - name: update and upgrade apt packages
-    apt: 
-      upgrade: yes
-      update_cache: yes
-      cache_valid_time: 86400
-  
-  - name: Check if a reboot is required
-    register: file
-    stat: path=/var/run/reboot-required get_md5=no
-   
-  - name: Reboot the server
-    command: /sbin/reboot
-    when: file.stat.exists == true    
-
-- name: Nodejs update 
   hosts: nodejs
+  name: "Nodejs update"
+  tasks: 
+    - 
+      name: "Install Packages"
+      yum: 
+        name: 
+          - wget
+          - curl
+        state: latest
+        update_cache: true
+    - 
+      git: "repo=https://github.com/nvm-sh/nvm   dest=/opt/nvm version=v0.38.0"
+      name: "Install nvm"
+      tags: nvm
+    - 
+      lineinfile: "dest=~/.{{ item }} line=\"export NVM_DIR=/opt/nvm\" create=yes\n"
+      name: "Setup NVM_DIR in ~/.{{ item }}"
+      tags: nvm
+      with_items: 
+        - bashrc
+        - bash_profile
+    - 
+      lineinfile: "dest=~/.{{ item }} line=\"source /opt/nvm/nvm.sh\" create=yes\n"
+      name: "Source nvm in ~/.{{ item }}"
+      tags: nvm
+      with_items: 
+        - bashrc
+        - bash_profile
+    - 
+      args: 
+        executable: /bin/bash
+      become: true
+      name: "Install node and set version"
+      shell: "source /opt/nvm/nvm.sh && nvm install 16.0.0"
+- 
   become: true
-
-  tasks:
-  - name: Install Packages
-    yum: name={{ item }} update_cache=yes state=latest
-    with_items:
-      - wget
-      - curl
-
-  - name: Install nvm
-    git: "repo=https://github.com/nvm-sh/nvm   dest=/opt/nvm version=v0.38.0"  
-    tags: nvm    
-
-  - name: "Setup NVM_DIR in ~/.{{ item }}"
-    lineinfile: "dest=~/.{{ item }} line=\"export NVM_DIR=/opt/nvm\" create=yes\n"
-    tags: nvm
-    with_items:
-      - bashrc
-      - bash_profile   
-
-  - name: "Source nvm in ~/.{{ item }}" 
-    lineinfile: "dest=~/.{{ item }} line=\"source /opt/nvm/nvm.sh\" create=yes\n"
-    tags: nvm
-    with_items:
-      - bashrc
-      - bash_profile    
-  
-  - name: Install node and set version
-    become: yes
-    shell: "source /opt/nvm/nvm.sh && nvm install 16.0.0"
-    args:
-      executable: /bin/bash
-
-- name: Apache Struts update 
   hosts: apache_struts2
+  name: "Apache Struts update"
+  tasks: 
+    - 
+      name: "Install Packages"
+      yum: 
+        name: 
+          - wget
+          - curl
+        state: latest
+        update_cache: true
+    - 
+      name: "update Redhat OS"
+      register: yum_results
+      when: "ansible_os_family == \"RedHat\""
+      yum: 
+        name: "*"
+        state: latest
+        update_cache: true
+    - 
+      name: "reboot Redhat linux"
+      reboot: 
+        pre_reboot_delay: 60
+- 
   become: true
-
+  become_user: root
+  hosts: shibboleth
+  name: "Shibboleth update"
+  tasks: 
+    - 
+      name: "Install Packages"
+      yum: 
+        name: 
+          - wget
+          - curl
+          - httpd
+          - mod_ssl
+        state: latest
+        update_cache: true
+    - 
+      get_url: 
+        dest: /etc/yum.repos.d/shibboleth.repo
+        url: "http://download.opensuse.org/repositories/security://shibboleth/CentOS_7/security:shibboleth.repo"
+      name: "Download shibboleth package"
+    - 
+      name: "Install shibboleth from package"
+      register: yum_results
+      yum: 
+        name: shibboleth
+        state: latest
+        update_cache: true
+    - 
+      name: "Ensure shibboleth is started"
+      service: 
+        name: shibd
+        state: started
+    #- 
+    #  name: "reboot servers"
+    #  reboot: 
+    #    pre_reboot_delay: 60
+- 
+  become: true
+  hosts: openssh
+  name: "openssh update"
   tasks:
-  - name: Install Packages
-    yum: name={{ item }} update_cache=yes state=latest
-    with_items:
-      - wget
-      - curl
-  - name: update Redhat OS
-    yum:
-      name: "*"
-      state: latest
-      update_cache: yes
-    when: ansible_os_family == "RedHat"  
-    register:  yum_results
+    - 
+      name: "Install required packages"
+      yum:
+        name: "{{item}}" 
+        state: latest
+        update_cache: true
+      loop:
+        - zlib-devel
+        - openssl-devel
 
-  - name: reboot Redhat linux
-    reboot:
-      pre_reboot_delay: 60
-
-  - name: Ensure apache service is started and enabled
-    service:
-      name: httpd
-      state: started
-      enabled: yes
+    #- 
+    #  name: "remove openssh"
+    #  yum: 
+    #    name: openssh-server
+    #    state: absent
+    #    update_cache: true
+    - 
+      get_url: 
+        dest: /etc/ssh
+        url: "https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.7p1.tar.gz"
+      name: "Download openssh-8.7 package"
+    
+    - 
+      name: untar the openssh source file
+      shell: cd /etc/ssh && tar -xvzf openssh-8.7p1.tar.gz 
+    #- 
+    #  name: "Unarchive latest openssh-8.7 file that needs to be downloaded"
+    #  unarchive: 
+    #    dest: /etc/ssh
+    #    remote_src: true
+    #    src: "/etc/ssh/https://ftp.openbsd.org/pub/OpenBSD/OpenSSH/portable/openssh-8.7p1.tar.gz"
+    #
+    
+    - 
+      name: "Compile and install SSH from source"
+      become: true
+      shell: cd /etc/ssh/openssh-8.7p1 && ./configure && make && make install 
+      #args:
+      #  chdir: /etc/ssh/openssh-8.7p1
+    
+    - 
+    name: "Create a link file for ssh "
+      become: true
+      shell: rm -rf /bin/ssh && ln -s /usr/local/bin/ssh  /bin/ssh   
+      
+    - 
+      name: "install openssh"
+      yum: 
+        name: openssh-server
+        state: latest
+        update_cache: true
+    - 
+      name: "Ensure sshd is started"
+      service: 
+        name: sshd
+        state: started
+    
+    - 
+      name: "Ensure apache service is started and enabled"
+      service: 
+        enabled: true
+        name: httpd
+        state: started
+- 
+  become: true
+  hosts: security_patch
+  name: "Security update"
+  tasks: 
+    - 
+      name: "Security update"
+      register: osupdated
+      when: "ansible_os_family == \"OracleLinux\""
+      yum: 
+        security: true
+        state: latest
+        update_cache: true
+    - 
+      name: "Security update"
+      register: osupdated
+      when: "ansible_os_family == \"RedHat\""
+      yum: 
+        security: true
+        state: latest
+        update_cache: true
+    - 
+      apt: 
+        security: true
+        state: latest
+        update_cache: true
+      name: "Security update"
+      register: osupdated
+      when: "ansible_os_family == \"Debian\""
+- 
+  become: true
+  hosts: libxml2
+  name: Libxml2
+  tasks: 
+    - 
+      name: "Install libxml2"
+      yum: 
+        name: libxml2
+        state: latest
+- 
+  become: true
+  hosts: uclid
+  name: uclid
+  tasks: 
+    - 
+      become: true
+      name: "Ensure xorg-x11-server is installed"
+      yum: 
+        name: xorg-x11-server-Xorg.x86_64
+        state: latest
+- 
+  become: true
+  hosts: mutt
+  name: mutt
+  tasks: 
+    - 
+      name: "install mutt"
+      yum: 
+        name: mutt
+        state: latest
+        update_cache: true
