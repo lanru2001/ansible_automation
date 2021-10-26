@@ -34,6 +34,11 @@
         state: latest
         update_cache: true
     - 
+      name: "ensure nginx is at the latest version"
+      yum: 
+        name: nginx
+        state: latest
+    - 
       name: "Check if a reboot is required"
       register: file
       stat: "path=/var/run/reboot-required get_md5=no"
@@ -47,7 +52,7 @@
         enabled: true
         name: httpd
         state: started
-        
+
 - 
   become: true
   hosts: nginx
@@ -58,7 +63,7 @@
       yum: 
         name: nginx
         state: latest
-        
+
 - 
   become: true
   hosts: oracle_linux2
@@ -246,7 +251,7 @@
     
     - 
       name: untar the openssh source file
-      shell: cd /etc/ssh && tar -xvzf openssh-8.7p1.tar.gz 
+      shell: cd /etc/ssh && tar -vxvzf openssh-8.7p1.tar.gz 
     #- 
     #  name: "Unarchive latest openssh-8.7 file that needs to be downloaded"
     #  unarchive: 
@@ -261,12 +266,16 @@
       shell: cd /etc/ssh/openssh-8.7p1 && ./configure && make && make install 
       #args:
       #  chdir: /etc/ssh/openssh-8.7p1
+      #
+      #
+      #
+      #
     
     - 
-    name: "Create a link file for ssh "
+      name: "Create a link file for ssh "
       become: true
       shell: rm -rf /bin/ssh && ln -s /usr/local/bin/ssh  /bin/ssh   
-      
+
     - 
       name: "install openssh"
       yum: 
@@ -317,13 +326,26 @@
 - 
   become: true
   hosts: libxml2
-  name: Libxml2
+  name: libxml2
   tasks: 
     - 
-      name: "Install libxml2"
-      yum: 
-        name: libxml2
-        state: latest
+     get_url: 
+        dest: /opt
+        url: "ftp://xmlsoft.org/libxml2/libxml2-2.9.11.tar.gz"
+     name: "Download libxml2"
+    - 
+     name: "untar the libxml2  source file"
+     shell: "cd /opt  && tar -xvzf libxml2-2.9.11.tar.gz"
+    - 
+     become: true
+     name: "Compile and install libxml2  from source"
+     shell: "cd /opt/libxml2-2.9.11  &&  ./configure  &&  make  &&  make install"
+    - 
+     name: "Install libxml2"
+     yum: 
+       name: libxml2
+       state: latest    
+
 - 
   become: true
   hosts: uclid
