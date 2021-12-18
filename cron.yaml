@@ -1,0 +1,19 @@
+--- 
+- 
+  become: true
+  hosts: uclib_prod_servers
+  tasks: 
+    - 
+      name: "Cronjob for security update"
+    - 
+      cron: 
+        cron_file: /var/log/RH-Updates
+        day: ‘*’
+        hour: 6
+        minute: 0
+        month: ‘*’
+        user: root
+        weekday: 1
+        job: "”yum update -y --security >> /var/log/RH-Updates 2>&1”"
+      tags: 
+        - cronjobs
