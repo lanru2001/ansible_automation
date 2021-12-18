@@ -3,7 +3,7 @@
 
   tasks:
    -name: install nginx
-    yum : pkg=nginx state-installed
+    yum : pkg=nginx state=installed
 
     notify:
        - start ngnix
