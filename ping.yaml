@@ -1,0 +1,8 @@
+---
+- name: "Test connectivity on target VMs" 
+  hosts: all 
+  
+  tasks: 
+
+  - name: ping test
+    ping:
