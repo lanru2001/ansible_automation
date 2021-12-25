@@ -1,0 +1,12 @@
+---
+- name: "Command module usage" 
+  hosts: web_servers
+  become: true
+  
+  tasks: 
+
+  - name: Execute command "Date" 
+    command: date
+
+  - name: Display resolv.conf contents
+    command: cat /etc/resolv.conf
