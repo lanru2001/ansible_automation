@@ -1,0 +1,30 @@
+---
+- name: "Create files and set permission on target servers" 
+  hosts: web_servers
+  become: true  
+  
+  tasks: 
+
+  
+  - name: Create a directory if it does not exist
+    file:
+       path: /opt/data/app
+       state: directory
+       mode: '0755'
+    become: true     
+
+  - name: Touch again the same file, but dont change times this makes the task idempotent
+    file:
+      path: /opt/data/app
+      state: touch
+      mode: u+rw,g-wx,o-rwx
+      modification_time: preserve
+      access_time: preserve
+    become: true       
+
+  - name: Touch a file, using symbolic modes to set the permissions (equivalent to 0644)
+    file:
+      path: /opt/data/app
+      state: touch
+      mode: u=rw,g=r,o=r
+    become: true  
