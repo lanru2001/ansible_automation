@@ -1,0 +1,14 @@
+---
+- name: "Test play 1" 
+  hosts: web_servers
+  become: true  
+  
+  tasks: 
+  - name: Copy a new "ntp.conf file into place, backing up the original if it differs from the copied version
+    copy:
+       src: /opt/data/app
+       dest: /tmp/data/app
+       owner: root
+       group: root
+       mode: '0644'
+       backup: yes
