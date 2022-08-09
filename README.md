@@ -4,7 +4,8 @@
 
 Ansible is an open source configuration management, software provisioning and application deployment tool.
 
-Use cases of Ansible:
+
+## Use cases of Ansible:
 
 Provisioning new resources
 
