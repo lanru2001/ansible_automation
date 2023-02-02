@@ -30,7 +30,6 @@
     name: epel-release
     state: latest
       
-
 - name: Ensure nginx packages are present
     yum:
       name: nginx, python-pip, python-devel, devel
