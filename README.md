@@ -85,3 +85,20 @@ Run ansible command as ansadmin user it should be successful (Master)
 ```bash
 ansible all -m ping
 ```
+```bash
+#Simple bash script to setup ansible client
+   
+python --version
+apt install python3 -y
+apt -y install python3-pip
+python --version
+python -V
+python3 --version
+useradd ansadmin
+passwd ansadmin
+echo "ansadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+sed -ie 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
+sudo service sshd reload
+su - ansadmin
+ssh-keygen
+```
