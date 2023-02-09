@@ -19,6 +19,10 @@ Application deployment
 
 Orchestration
 
+## Change Ansible instance Hostname
+```bash
+hostnamectl set-hostname [hostname] 
+```
 
 ## Install Python latest version (on Control node and Managed host)
 
