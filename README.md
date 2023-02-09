@@ -32,7 +32,7 @@ yum install python3 -y
 By default, python3 is the command to run python commands. to use just python, use "alternatives" command. (on Control node and Managed host)
 
 alternatives --set python /usr/bin/python3
-python --version
+python3 --version
 
 ## Install PIP 
 ```bash
