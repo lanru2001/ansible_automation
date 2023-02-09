@@ -86,6 +86,7 @@ Run ansible command as ansadmin user it should be successful (Master)
 ansible all -m ping
 ```
 ```bash
+#!/bin/bash
 #Simple bash script to setup ansible client
    
 python --version
