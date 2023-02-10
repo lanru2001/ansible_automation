@@ -93,7 +93,6 @@ python --version
 apt install python3 -y
 apt -y install python3-pip
 python --version
-python -V
 python3 --version
 useradd ansadmin
 passwd ansadmin
