@@ -70,6 +70,8 @@ Note: Ansible must be installed as a user (here ansadmin)
 ansible --version
 ```
 
+##  Add managed host entries in /etc/hosts file on control node. This is only required when you don’t have local DNS server configured.
+
 Log in as a ansadmin user on master and generate ssh key (on Control node)
 
 ## Create a private and public key
