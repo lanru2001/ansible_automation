@@ -7,17 +7,17 @@ Ansible is an open source configuration management, software provisioning and ap
 
 ## Use cases of Ansible:
 
-Provisioning new resources
+- Provisioning new resources
 
-Configuration management
+- Configuration management
 
-Continuous delivery
+- Continuous delivery
 
-Security compliance
+- Security compliance
 
-Application deployment
+- Application deployment
 
-Orchestration
+- Orchestration
 
 ## Change Ansible instance Hostname
 ```bash
