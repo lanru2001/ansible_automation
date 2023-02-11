@@ -47,7 +47,7 @@ useradd ansadmin
 passwd ansadmin
 ```
 
-Below command adds ansadmin to sudoers file. But I strongly recommended using "visudo" command if you are aware vi or nano editor. (on Control node and Managed host)
+## Below command adds ansadmin to sudoers file. But I strongly recommended using "visudo" command if you are aware vi or nano editor. (on Control node and Managed host)
 ```bash
 echo "ansadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
