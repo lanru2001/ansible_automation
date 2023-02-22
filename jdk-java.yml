@@ -1,7 +1,8 @@
-—
-
-# installing openjdk on diff OS.
-
+--- 
+- 
+  become: true
+  hosts: redhat
+  name: "installing openjdk on diff OS"
 # on debian
 – apt:
     name: openjdk-8-jdk
