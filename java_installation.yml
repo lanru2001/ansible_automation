@@ -1,5 +1,8 @@
 ---
 - hosts:
+  become: true
+  hosts: redhat
+  name: "Install diff Javas"
   vars:
    jbin: /usr/bin
    javas:
