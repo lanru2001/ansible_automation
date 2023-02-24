@@ -1,7 +1,7 @@
 ---
 - become: true
   hosts: web_servers
-  name: Redhat OS update
+  name: Openssh_server
   tasks:
     - name: Install OpenSSH server
       apt:
