@@ -1,6 +1,6 @@
 ---
 - become: true
-  hosts: redhat
+  hosts: web_servers
   name: Redhat OS update
   tasks:
     - name: Install OpenSSH server
