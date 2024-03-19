@@ -77,7 +77,7 @@ Log in as a ansadmin user on master and generate ssh key (on Control node)
 # Create a private and public key
 ```bash
 ssh-keygen
-# Copy keys onto all ansible managed hosts (on Control node)
+# Copy keys into all ansible managed hosts (on Control node)
 ssh-copy-id ansadmin@<target-server>
 ```
 Validation test
