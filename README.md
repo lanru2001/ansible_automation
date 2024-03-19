@@ -1,11 +1,11 @@
 
 
-## Ansible 
+# Ansible 
 
 Ansible is an open source configuration management, software provisioning and application deployment tool.
 
 
-## Use cases of Ansible:
+# Use cases of Ansible:
 
 - Provisioning new resources
 
@@ -19,12 +19,12 @@ Ansible is an open source configuration management, software provisioning and ap
 
 - Orchestration
 
-## Change Ansible instance Hostname
+# Change Ansible instance Hostname
 ```bash
 hostnamectl set-hostname [hostname] 
 ```
 
-## Install Python latest version (on Control node and Managed host)
+# Install Python latest version (on Control node and Managed host)
 
 ```bash
 yum install python3 -y
@@ -34,20 +34,20 @@ By default, python3 is the command to run python commands. to use just python, u
 alternatives --set python /usr/bin/python3
 python3 --version
 
-## Install PIP 
+# Install PIP 
 ```bash
 yum -y install python3-pip
 python --version
 ```
 Create a new user for ansible administration & grant admin access to the user (on Control node and Managed host)
 
-## Create ansible user 
+# Create ansible user 
 ```bash
 useradd ansadmin
 passwd ansadmin
 ```
 
-## Below command adds ansadmin to sudoers file. But I strongly recommended using "visudo" command if you are aware vi or nano editor. (on Control node and Managed host)
+# Below command adds ansadmin to sudoers file. But I strongly recommended using "visudo" command if you are aware vi or nano editor. (on Control node and Managed host)
 ```bash
 echo "ansadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 ```
@@ -55,7 +55,7 @@ echo "ansadmin ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
 Using key-based authentication is advised. If you are still at the learning stage use password-based authentication (on Control node and Managed host)
 
 ```bash
-sed command replaces "PasswordAuthentication no to yes" without editing file 
+#sed command replaces "PasswordAuthentication no to yes" without editing file 
 sed -ie 's/PasswordAuthentication no/PasswordAuthentication yes/' /etc/ssh/sshd_config
 sudo service sshd reload
 #Install Ansible as a ansadmin user (on Control node)
@@ -64,17 +64,17 @@ pip3 install ansible --user
 ```
 Note: Ansible must be installed as a user (here ansadmin)
 
-## check for ansible version
+# check for ansible version
 
 ```bash
 ansible --version
 ```
 
-##  Add managed host entries in /etc/hosts file on control node. This is only required when you don’t have local DNS server configured.
+#  Add managed host entries in /etc/hosts file on control node. This is only required when you don’t have local DNS server configured.
 
 Log in as a ansadmin user on master and generate ssh key (on Control node)
 
-## Create a private and public key
+# Create a private and public key
 ```bash
 ssh-keygen
 # Copy keys onto all ansible managed hosts (on Control node)
