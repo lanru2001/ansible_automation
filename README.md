@@ -78,7 +78,7 @@ Log in as a ansadmin user on master and generate ssh key (on Control node)
 ```bash
 ssh-keygen
 # Copy keys into all ansible managed hosts (on Control node)
-ssh-copy-id ansadmin@<target-server>
+ssh-copy-id -i ~/.ssh/id_rsa.pub ansadmin@<target-server>
 ```
 Validation test
 Create a directory /etc/ansible and create an inventory file called "hosts" add control node IP address in it.
