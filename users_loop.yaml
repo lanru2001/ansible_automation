@@ -1,24 +1,27 @@
 ---
 - name: Create users in target  servers
   hosts: webservers
+  become: true
 
   tasks:
    - user:
-       name: "{{ item }}"
+       name: "{{ item.name }}"
        state:  present
-       uid: 1010
+       uid: "{{ item.uid }}"
+       password: "{{ item.password }}"
      loop:
-      - joe
-      - temitope
-      - bola
-      - hammed
-      - chloe
-      - erika
-      - bolade
-      - abraham
-      - eniola
-      - sodiq
-      - toun
-      - bisola
-      - azeez
-      - olanrewaju
+       #The 'password' argument must be encrypted for this module to work properly
+       - { name: joe , uid: 1010, password: test1 }
+       - { name: temitope , uid: 1011, password: test2 }
+       - { name: bola , uid: 1012, password: test3 }
+       - { name: hammed , uid: 1013, password: test4 }
+       - { name: chloe , uid: 1014, password: test5 }
+       - { name: erika , uid: 1015, password: test6 }
+       - { name: bolade , uid: 1016, password: test7 }
+       - { name: emmanuel , uid: 1010, password: test8 }
+       - { name: lanre , uid: 1011, password: test9 }
+       - { name: lookman , uid: 1012, password: test10 }
+       - { name: ademola , uid: 1013, password: test11 }
+       - { name: toun , uid: 1014, password: test12 }
+       - { name: abraham , uid: 1015, password: test13 }
+       - { name: bola , uid: 1016, password: test14 }
