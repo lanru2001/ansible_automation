@@ -1,0 +1,24 @@
+---
+- name: Create users in target  servers
+  hosts: webservers
+
+  tasks:
+   - user:
+       name: "{{ item }}"
+       state:  present
+       uid: 1010
+     loop:
+      - joe
+      - temitope
+      - bola
+      - hammed
+      - chloe
+      - erika
+      - bolade
+      - abraham
+      - eniola
+      - sodiq
+      - toun
+      - bisola
+      - azeez
+      - olanrewaju
