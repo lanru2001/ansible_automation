@@ -6,12 +6,12 @@
 
   tasks:
     - name: Install prerequisites
-      apt: name={{ item }} update_cache=yes state=latest force_apt_get=yes
+      apt: name= "{{ item }}" update_cache=yes state=latest force_apt_get=yes
       loop: [ 'aptitude' ]
 
   #Apache Configuration
     - name: Install LAMP Packages
-      apt: name={{ item }} update_cache=yes state=latest
+      apt: name= "{{ item }}" update_cache=yes state=latest
       loop: [ 'apache2', 'mysql-server', 'python3-pymysql', 'php', 'php-mysql', 'libapache2-mod-php' ]
 
     - name: Create document root
